@@ -23,12 +23,17 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    // find message by id
+    // find all messages posted by a specific user id
+    public List<Message> findMessagesPostedBy(int postedBy) {
+        return messageRepository.findAllByPostedBy(postedBy);
+    }
+
+    // find message by message id
     public Message findByMessageId(int messageId) {
         return messageRepository.findByMessageId(messageId);
     }
 
-    // delete message by id
+    // delete message by message id
     public Integer deleteByMessageId(int messageId) {
         return messageRepository.deleteByMessageId(messageId);
     }
