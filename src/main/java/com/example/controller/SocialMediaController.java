@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 import com.example.entity.*;
+import com.example.repository.AccountRepository;
 import com.example.service.*;
 
 import javafx.application.Application;
@@ -30,6 +31,8 @@ import javafx.application.Application;
 public class SocialMediaController {
     @Autowired
     AccountService accountService;
+    @Autowired
+    AccountRepository accountRepository;
     /*
      * ## 1: Our API should be able to process new User registrations.
      * 
@@ -53,9 +56,9 @@ public class SocialMediaController {
         if (account.getUsername() == "" || account.getPassword().length() < 4) {
             return ResponseEntity.status(400).body(null);
         }
-        if (accountService.findAccountByUsername(account.getUsername()) != null) {
+        if (accountService.findByUsername(account.getUsername()) != null) {
             return ResponseEntity.status(409).body(null);
         }
-        return ResponseEntity.status(200).body(account);
+        return ResponseEntity.status(200).body(accountService.save(account));
     }
 }
