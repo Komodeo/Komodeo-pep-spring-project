@@ -2,9 +2,12 @@ package com.example.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import com.example.entity.*;
 import com.example.service.*;
@@ -112,5 +115,21 @@ public class SocialMediaController {
             e.printStackTrace(System.out);
         }
         return ResponseEntity.status(400).body(message);
+    }
+
+    /*
+     * ## 4: Our API should be able to retrieve all messages.
+     * 
+     * As a user, I should be able to submit a GET request on the endpoint GET
+     * localhost:8080/messages.
+     * 
+     * - The response body should contain a JSON representation of a list containing
+     * all messages retrieved from the database. It is expected for the list to
+     * simply be empty if there are no messages. The response status should always
+     * be 200, which is the default.
+     */
+    @GetMapping(value = "/messages")
+    public List<Message> findAllMessages() {
+        return messageService.findAll();
     }
 }
