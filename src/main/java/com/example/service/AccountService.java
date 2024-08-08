@@ -10,6 +10,11 @@ import com.example.entity.Account;
 public class AccountService {
     @Autowired
     AccountRepository accountRepository;
+
+    // return account by account id
+    public Account findByAccountId(int accountId) {
+        return accountRepository.findByAccountId(accountId);
+    }
     
     // return account by username
     public Account findByUsername(String username) {

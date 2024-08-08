@@ -10,4 +10,9 @@ import com.example.entity.Message;
 public class MessageService {
     @Autowired
     MessageRepository messageRepository;
+
+    // save and return message
+    public Message save(Message message) {
+        return messageRepository.save(message);
+    }
 }
