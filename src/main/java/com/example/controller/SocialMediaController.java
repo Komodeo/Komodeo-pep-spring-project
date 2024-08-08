@@ -2,6 +2,7 @@ package com.example.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import com.example.entity.*;
 import com.example.service.*;
@@ -148,5 +152,34 @@ public class SocialMediaController {
     @GetMapping(value = "messages/{messageId}")
     public Message findMessageById(@PathVariable int messageId) {
         return messageService.findByMessageId(messageId);
+    }
+
+    /*
+     * ## 6: Our API should be able to delete a message identified by a message ID.
+     * 
+     * As a User, I should be able to submit a DELETE request on the endpoint DELETE
+     * localhost:8080/messages/{messageId}.
+     * 
+     * - The deletion of an existing message should remove an existing message from
+     * the database. If the message existed, the response body should contain the
+     * number of rows updated (1). The response status should be 200, which is the
+     * default.
+     * - If the message did not exist, the response status should be 200, but the
+     * response body should be empty. This is because the DELETE verb is intended to
+     * be idempotent, ie, multiple calls to the DELETE endpoint should respond with
+     * the same type of response.
+     */
+    @Transactional
+    @DeleteMapping(value = "messages/{messageId}")
+    public ResponseEntity<Integer> deleteMessageById(@PathVariable int messageId) {
+        try {
+            Message messageToDelete = messageService.findByMessageId(messageId);
+            if (messageToDelete != null) {
+                return ResponseEntity.status(200).body(messageService.deleteByMessageId(messageId));
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+        return ResponseEntity.status(200).body(null);
     }
 }

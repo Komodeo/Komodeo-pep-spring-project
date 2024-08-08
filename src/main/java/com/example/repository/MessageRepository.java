@@ -9,4 +9,7 @@ import com.example.entity.Message;
 public interface MessageRepository extends JpaRepository<Message, Integer> {
     // find message by message id
     Message findByMessageId(int messageId);
+
+    // delete message by message id
+    Integer deleteByMessageId(int messageId);
 }

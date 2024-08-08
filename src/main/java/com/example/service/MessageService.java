@@ -27,4 +27,9 @@ public class MessageService {
     public Message findByMessageId(int messageId) {
         return messageRepository.findByMessageId(messageId);
     }
+
+    // delete message by id
+    public Integer deleteByMessageId(int messageId) {
+        return messageRepository.deleteByMessageId(messageId);
+    }
 }
