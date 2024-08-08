@@ -1,10 +1,20 @@
 package com.example.controller;
 
+import org.apache.catalina.core.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 import com.example.entity.*;
+import com.example.service.*;
+
+import javafx.application.Application;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your
@@ -18,6 +28,8 @@ import com.example.entity.*;
  */
 @RestController
 public class SocialMediaController {
+    @Autowired
+    AccountService accountService;
     /*
      * ## 1: Our API should be able to process new User registrations.
      * 
@@ -37,7 +49,13 @@ public class SocialMediaController {
      * status should be 400. (Client error)
      */
     @PostMapping(value = "/register")
-    public Account postAccount(@RequestBody Account account) {
-        return account;
+    public ResponseEntity<Account> postAccount(@RequestBody Account account) {
+        if (account.getUsername() == "" || account.getPassword().length() < 4) {
+            return ResponseEntity.status(400).body(null);
+        }
+        if (accountService.findAccountByUsername(account.getUsername()) != null) {
+            return ResponseEntity.status(409).body(null);
+        }
+        return ResponseEntity.status(200).body(account);
     }
 }
