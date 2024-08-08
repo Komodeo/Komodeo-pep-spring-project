@@ -18,7 +18,7 @@ import com.example.entity.*;
 import com.example.service.*;
 
 /**
- * TODO: You will need to write your own endpoints and handlers for your
+ * DONE: You will need to write your own endpoints and handlers for your
  * controller using Spring. The endpoints you will need can be
  * found in readme.md as well as the test cases. You be required to use
  * the @GET/POST/PUT/DELETE/etc Mapping annotations
