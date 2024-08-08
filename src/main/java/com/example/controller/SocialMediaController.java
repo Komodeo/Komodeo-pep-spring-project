@@ -1,21 +1,13 @@
 package com.example.controller;
 
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 import com.example.entity.*;
-import com.example.repository.AccountRepository;
 import com.example.service.*;
-
-import javafx.application.Application;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your
@@ -29,10 +21,12 @@ import javafx.application.Application;
  */
 @RestController
 public class SocialMediaController {
+    // map services
     @Autowired
     AccountService accountService;
     @Autowired
-    AccountRepository accountRepository;
+    MessageService messageService;
+
     /*
      * ## 1: Our API should be able to process new User registrations.
      * 
@@ -52,13 +46,42 @@ public class SocialMediaController {
      * status should be 400. (Client error)
      */
     @PostMapping(value = "/register")
-    public ResponseEntity<Account> postAccount(@RequestBody Account account) {
+    public ResponseEntity<Account> registerAccount(@RequestBody Account account) {
         if (account.getUsername() == "" || account.getPassword().length() < 4) {
-            return ResponseEntity.status(400).body(null);
+            return ResponseEntity.status(400).body(account);
         }
         if (accountService.findByUsername(account.getUsername()) != null) {
-            return ResponseEntity.status(409).body(null);
+            return ResponseEntity.status(409).body(account);
         }
         return ResponseEntity.status(200).body(accountService.save(account));
+    }
+
+    /*
+     * ## 2: Our API should be able to process User logins.
+     * 
+     * As a user, I should be able to verify my login on the endpoint POST
+     * localhost:8080/login. The request body will contain a JSON representation of
+     * an Account.
+     * 
+     * - The login will be successful if and only if the username and password
+     * provided in the request body JSON match a real account existing on the
+     * database. If successful, the response body should contain a JSON of the
+     * account in the response body, including its accountId. The response status
+     * should be 200 OK, which is the default.
+     * - If the login is not successful, the response status should be 401.
+     * (Unauthorized)
+     */
+    @PostMapping(value = "/login")
+    public ResponseEntity<Account> loginAccount(@RequestBody Account account) {
+        try {
+            Account loggedAccount = accountService.findByUsername(account.getUsername());
+            if (account.getUsername() != null && loggedAccount.getUsername().equals(account.getUsername())
+                    && loggedAccount.getPassword().equals(account.getPassword())) {
+                return ResponseEntity.status(200).body(loggedAccount);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+        return ResponseEntity.status(401).body(account);
     }
 }
