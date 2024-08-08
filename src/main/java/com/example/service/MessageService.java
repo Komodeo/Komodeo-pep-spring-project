@@ -22,4 +22,9 @@ public class MessageService {
     public List<Message> findAll() {
         return messageRepository.findAll();
     }
+
+    // find message by id
+    public Message findByMessageId(int messageId) {
+        return messageRepository.findByMessageId(messageId);
+    }
 }
