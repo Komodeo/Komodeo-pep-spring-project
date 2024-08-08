@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -134,8 +134,8 @@ public class SocialMediaController {
      * be 200, which is the default.
      */
     @GetMapping(value = "/messages")
-    public List<Message> findAllMessages() {
-        return messageService.findAll();
+    public ResponseEntity<List<Message>> findAllMessages() {
+        return ResponseEntity.status(200).body(messageService.findAll());
     }
 
     /*
@@ -150,8 +150,8 @@ public class SocialMediaController {
      * 200, which is the default.
      */
     @GetMapping(value = "messages/{messageId}")
-    public Message findMessageById(@PathVariable int messageId) {
-        return messageService.findByMessageId(messageId);
+    public ResponseEntity<Message> findMessageById(@PathVariable int messageId) {
+        return ResponseEntity.status(200).body(messageService.findByMessageId(messageId));
     }
 
     /*
@@ -181,5 +181,37 @@ public class SocialMediaController {
             e.printStackTrace(System.out);
         }
         return ResponseEntity.status(200).body(null);
+    }
+
+    /*
+     * ## 7: Our API should be able to update a message text identified by a message
+     * ID.
+     * 
+     * As a user, I should be able to submit a PATCH request on the endpoint PATCH
+     * localhost:8080/messages/{messageId}. The request body should contain a new
+     * messageText values to replace the message identified by messageId. The
+     * request body can not be guaranteed to contain any other information.
+     * 
+     * - The update of a message should be successful if and only if the message id
+     * already exists and the new messageText is not blank and is not over 255
+     * characters. If the update is successful, the response body should contain the
+     * number of rows updated (1), and the response status should be 200, which is
+     * the default. The message existing on the database should have the updated
+     * messageText.
+     * - If the update of the message is not successful for any reason, the response
+     * status should be 400. (Client error)
+     */
+    @PatchMapping(value = "messages/{messageId}")
+    public ResponseEntity<Integer> patchMessageById(@PathVariable int messageId, @RequestBody Message message) {
+        try {
+            Message messageToPatch = messageService.findByMessageId(messageId);
+            if (messageToPatch != null && message.getMessageText() != "" && message.getMessageText().length() <= 255) {
+                messageService.save(message);
+                return ResponseEntity.status(200).body(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+        return ResponseEntity.status(400).body(null);
     }
 }
